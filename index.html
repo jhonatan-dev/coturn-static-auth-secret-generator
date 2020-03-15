@@ -231,6 +231,56 @@
     <script src="./public/js/Parsley/parsley.min.js"></script>
     <script src="./public/js/Parsley/i18n/es.js"></script>
 
-    <script src="./public/js/script.js"></script>
+    <script>
+      const apiURL = "https://turn-rest-api.herokuapp.com/credenciales",
+        getFormInputsData = e => {
+          var t = e.getElementsByTagName("input"),
+            a = {};
+          for (let e = 0; e < Number(t.length); e++) a[t[e].name] = t[e].value;
+          return a;
+        };
+      document.addEventListener("DOMContentLoaded", () => {
+        const e = document.getElementById("form");
+        e.addEventListener("submit", t => {
+          (e.querySelector("#success").innerHTML = ""),
+            t.preventDefault(),
+            t.stopPropagation();
+        }),
+          $("#form")
+            .parsley()
+            .on("form:success", async t => {
+              e.querySelector("#btnSubmit").disabled = !0;
+              try {
+                const t = getFormInputsData(e),
+                  a = await fetch(apiURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(t),
+                    mode: "cors",
+                    cache: "default"
+                  }),
+                  r = await a.json(),
+                  s = document.createElement("div");
+                (s.className = "alert alert-success"),
+                  (s.innerHTML = `<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;  </button><p>Nombre de usuario: <b>${r.username}</b> <br> Contraseña: <b>${r.credential}</b> <br> <i>Nota: Expirará en ${t.time_limit} hora(s) a partir de ahora.</i> </p>`),
+                  e.querySelector("#success").appendChild(s);
+              } catch (t) {
+                console.error(t);
+                const a = document.createElement("div");
+                (a.className = "alert alert-danger"),
+                  (a.innerHTML = `<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button> <strong>Algo fue mal. Error: ${t}</strong>`),
+                  e.querySelector("#success").appendChild(a);
+              } finally {
+                e.reset(),
+                  $("#form")
+                    .parsley()
+                    .reset(),
+                  setTimeout(() => {
+                    e.querySelector("#btnSubmit").disabled = !1;
+                  }, 1e3);
+              }
+            });
+      });
+    </script>
   </body>
 </html>
