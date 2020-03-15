@@ -1,0 +1,31 @@
+{
+  "name": "coturn-rest-api",
+  "version": "1.0.0",
+  "description": "API REST para servidor COTURN",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config app.js",
+    "start": "node -r dotenv/config app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "coturn-rest-api"
+  ],
+  "author": "Jhonatan David Castillo Salvador",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-validator": "^6.4.0",
+    "morgan": "^1.9.1",
+    "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.2"
+  },
+  "engines": {
+    "node": ">=10.15.2",
+    "npm": ">=6.4.1"
+  }
+}

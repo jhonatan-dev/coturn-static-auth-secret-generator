@@ -1,0 +1,236 @@
+<!--index.html para GitHub Pages-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>TURN REST API (COTURN Server)</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./public/css/style.css" />
+    <link rel="stylesheet" href="https://parsleyjs.org/src/parsley.css" />
+  </head>
+  <body>
+    <div class="container mt-4 mb-4">
+      <div class="d-flex justify-content-center">
+        <div class="card" style="width: 50rem;">
+          <div class="card-body">
+            <h5 class="card-title">Ingreso de datos</h5>
+            <form id="form" method="POST" data-parsley-validate novalidate>
+              <div class="form-group row">
+                <label class="col-12 col-form-label text-sm-left"
+                  >Nombre de usuario <small class="obligatorio">*</small></label
+                >
+                <div class="col-12">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="username"
+                    placeholder="Nombre de usuario"
+                    autocomplete="off"
+                    required
+                    minlength="6"
+                    data-parsley-trigger="change"
+                  />
+                  <small class="form-text text-muted"
+                    >Nombre de usuario que desea utilizar para conectar su
+                    aplicación con el servidor COTURN.</small
+                  >
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-12 col-form-label text-sm-left"
+                  >COTURN Static Auth Secret
+                  <small class="obligatorio">*</small>
+                </label>
+                <div class="col-12">
+                  <input
+                    type="text"
+                    required
+                    name="static_auth_secret"
+                    placeholder="COTURN Static Auth Secret"
+                    class="form-control"
+                    data-parsley-trigger="change"
+                    autocomplete="off"
+                  />
+                  <small class="form-text text-muted"
+                    >Definido en el archivo de configuración del servidor COTURN
+                    <a
+                      href="https://github.com/coturn/coturn/blob/master/examples/etc/turnserver.conf"
+                      target="_newblank"
+                      ><i>(turnserver.conf)</i></a
+                    >.
+                  </small>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-12 col-form-label text-sm-left"
+                  >Tiempo límite de acceso</label
+                >
+                <div class="col-12">
+                  <input
+                    min="1"
+                    step="1"
+                    value="1"
+                    type="number"
+                    required
+                    name="time_limit"
+                    placeholder="Tiempo límite de acceso"
+                    class="form-control"
+                    data-parsley-trigger="change"
+                    autocomplete="off"
+                    data-parsley-trigger="change"
+                  />
+                  <small class="form-text text-muted"
+                    >Por defecto es de1 hora.</small
+                  >
+                </div>
+              </div>
+              <div id="success"></div>
+              <div class="form-group row text-right">
+                <div class="col-12">
+                  <button
+                    id="btnSubmit"
+                    type="submit"
+                    class="btn btn-primary btn-lg btn-block"
+                  >
+                    Obtener credenciales de acceso
+                  </button>
+                </div>
+              </div>
+            </form>
+            <small>
+              Para conocer sobre los mecanismos de credenciales de acceso de un
+              servidor COTURN,
+              <a data-toggle="modal" href="" data-target="#infoCredenciales"
+                >Click aquí</a
+              >.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="infoCredenciales"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="infoCredenciales"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoCredencialesTitulo">
+              Credenciales de Acceso en servidor
+              <a href="https://github.com/coturn/coturn" target="_newblank"
+                >COTURN</a
+              >
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Cerrar"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body text-justify">
+            <p>
+              Para que cualquier aplicación o usuario pueda usar el servidor
+              TURN, se debe tener un nombre de usuario y una contraseña.
+              Dependiendo de cómo se creen el nombre de usuario y la contraseña,
+              hay dos métodos principales para configurar un servidor TURN:
+            </p>
+            <ul>
+              <li>
+                <b>Mecanismo de credenciales a largo plazo</b>
+                <p>
+                  El mecanismo de credenciales a largo plazo es simple. Se
+                  comparte un nombre de usuario y contraseña entre el TURN
+                  Server y la aplicación / usuario. Estas credenciales no
+                  caducarán. Cualquiera que tenga estas credenciales puede usar
+                  el servidor TURN. Este mecanismo es adecuado para aplicaciones
+                  donde las credenciales del servidor TURN no están expuestas a
+                  los usuarios finales, sino que solo las usan los servidores.
+                </p>
+              </li>
+              <li>
+                <b>Mecanismo de credenciales por tiempo limitado</b>
+                <p>
+                  En el mecanismo de credenciales de tiempo limitado
+                  <a
+                    href="https://tools.ietf.org/html/draft-uberti-behave-turn-rest-00#section-4"
+                    target="_newblank"
+                    >(descrito aquí)</a
+                  >, una clave estática se comparte entre el servidor TURN y la
+                  aplicación. Este compartimiento se utilizará para generar
+                  nombres de usuario y contraseñas dinámicos para la aplicación.
+                  Estos nombres de usuario y contraseñas dinámicos pueden ser
+                  utilizados por las aplicaciones y caducarán dentro de un
+                  período de tiempo predefinido. Este mecanismo es más adecuado
+                  para las aplicaciones donde las credenciales del servidor TURN
+                  deben exponerse a los usuarios finales.
+                  <a href="https://jitsi.org/" target="_newblank">Jitsi</a>,
+                  <a href="https://www.simplewebrtc.com/" target="_newblank"
+                    >SimpleWebRTC</a
+                  >,
+                  <a
+                    href="https://github.com/strukturag/spreed-webrtc"
+                    target="_newblank"
+                    >SpreedWebRTC</a
+                  >
+                  admite el mecanismo de credenciales de tiempo limitado.
+                </p>
+              </li>
+            </ul>
+            <small
+              >Para más información, revisar la documentación oficial en
+              <a
+                href="https://github.com/coturn/coturn/wiki/turnserver"
+                target="_newblank"
+                >Coturn Wiki</a
+              >.</small
+            >
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="./public/js/Parsley/parsley.min.js"></script>
+    <script src="./public/js/Parsley/i18n/es.js"></script>
+
+    <script src="./public/js/script.js"></script>
+  </body>
+</html>
