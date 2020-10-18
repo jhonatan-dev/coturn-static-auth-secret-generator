@@ -1,2 +1,2 @@
-# turn-rest-api
-TURN REST API
+# coturn-users-generator
+COTURN Users Generator
