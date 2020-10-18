@@ -4,7 +4,7 @@ module.exports = {
   getTURNCredentials: (
     nombreUsuario = "admin",
     hashAuthSecret = "admin",
-    time_limit = 1
+    time_limit = 24
   ) => {
     //Las credenciales serán válidas por las próximas 24 horas
     let unixTimeStamp = parseInt(Date.now() / 1000) + time_limit * 3600;
